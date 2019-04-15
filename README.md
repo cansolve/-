@@ -39,3 +39,49 @@ $('btn').bind('click',function(e){ //点击按钮显示
 ```
 
 这样应该挺好懂吧，可以试试
+
+
+## 解决：初步解决方案是给body或者html添加`overflow：hidden`样式，当然height要设置成100%
+
+```
+$("#showProup").click(function() {
+      $("#mask").show(0,function(){
+           $("body").css('overflow','hidden');
+      });
+  })
+  $("#close").click(function() {
+      $("#mask").hide(0,function(){
+          $("body").css('overflow','scroll');
+      });
+  })
+}
+```
+
+移动端问题比较明显，所以可以`touchmove`代替
+
+```
+$(document).on("touchmove",function(e) {
+  e.preventDefault(); 
+})
+```
+
+这种方法在移动端是可以解决滑动的问题，但有种情景就显得有点尴尬了，移动端屏幕本来就小，如果弹窗的内容过多也需要滑动（比如很长的活动规则），因为弹窗出现的时候已经禁止了滑动事件，此时禁止滑动之前先做一下判断---
+
+```
+$(document).on("touchmove",function(e) {
+   if(e.target.className.indexOf("shadeBox") >= 0) {
+        e.preventDefault();      
+    } 
+})
+```
+
+以上为想到的初步方案，如有更好可替换
+
+解决：用户点击一个链接，会出现一个边框或者半透明灰色遮罩, 不同生产商定义出来额效果不一样，可设置-webkit-tap-highlight-color的alpha值为0去除部分机器自带的效果
+
+```
+a,button,input,textarea{
+  -webkit-tap-highlight-color: rgba(0,0,0,0;)
+  -webkit-user-modify:read-write-plaintext-only;
+}
+```
